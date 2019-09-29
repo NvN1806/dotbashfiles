@@ -1,0 +1,89 @@
+count() {
+cat $1 | wc -l
+}
+sprofile() {
+source .bashprofile
+}
+
+simpleserver(){
+python -m simplehttpserver.py
+}
+
+png(){
+ping 192.168.0.1
+}
+
+ubantu() {
+ssh root@157.245.97.9
+}
+#findomain
+fd(){
+cd ~/recon/$1/
+findomain -t $1 -o txt
+cd ~
+}
+#assetfinder
+af(){
+assetfinder --subs-only $1 > ~/recon/$1/af.txt
+} 
+#sublime
+sublime(){
+cd /root/Downloads/sublime_text_3/
+./sublime_text
+cd ~
+}
+#directory search
+dirsearch(){
+cd ~/tools/dirsearch/
+python3 dirsearch.py -u $1 -e   
+cd ~ 
+}
+#multi domain dirsearch
+multidaomaindirsearch(){
+cd ~/tools/dirsearch/
+./multidomaindirsearch.sh $1 > ~/recon/$1/dir.txt 
+cd ~
+}
+
+#screenshots
+websc(){
+cd ~/tools/webscreenshot/
+python3 webscreenshot.py
+cd ~ 
+}
+
+
+keygen() {
+cd /root/Downloads/burp_licence_key_gen/
+java -jar BurpKeygen.jar
+cd ~ 
+}
+#burpsuit
+burp() {
+cd /root/Downloads/burp_licence_key_gen/
+java -Xbootclasspath/p:BurpKeygen.jar -jar burpsuite_pro_v1.7.35.jar
+cd ~
+}
+
+chrome() {
+chromium --no-sandbox
+}
+
+#recon
+
+certspotter(){
+curl -s https://certspotter.com/api/v0/certs\?domain\=$1 | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | grep $1
+} #h/t Michiel Prins
+
+crtsh(){
+curl -s https://crt.sh/?q=%.$1  | sed 's/<\/\?[^>]\+>//g' |  sed 's/^ *//g' | sed -e '1,2d' | sort -u | grep $1 
+}
+
+certnmap(){
+curl https://certspotter.com/api/v1/certs\?domain\=$1 | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u | grep $1  | nmap -T5 -Pn -sS -i - -$
+} #h/t Jobert Abma
+
+ipinfo(){
+curl http://ipinfo.io/$1
+}
+
