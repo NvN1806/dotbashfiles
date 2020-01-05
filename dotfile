@@ -1,16 +1,27 @@
 count() {
 cat $1 | wc -l
 }
-sprofile() {
-source .bashprofile
-}
 
+sp() {
+source ~/.bash_profile
+}
+np() {
+nano ~/.bash_profile
+}
 simpleserver(){
-python -m simplehttpserver.py
+python -m /home/simplehttpserver.py
+}
+#aws
+aws(){
+ssh -i "/home/downloads/nvn.pem" ubuntu@ec2-13-234-21-4.ap-south-1.compute.amazonaws.com
+}
+ubantu()
+{
+ssh -i "~/Downloads/ubantu.pem" ubuntu@ec2-13-235-95-29.ap-south-1.compute.amazonaws.com
 }
 
 png(){
-ping 192.168.0.1
+ping 
 }
 
 ubantu() {
@@ -18,14 +29,49 @@ ssh root@157.245.97.9
 }
 #findomain
 fd(){
-cd ~/recon/$1/
-findomain -t $1 -o txt
+mkdir recon
+cd recon/
+findomain -t $1 -u ~/recon/$1/fd.txt
+cd  ~/recon/$1/
+cat fd.txt | wc -l
 cd ~
 }
+
 #assetfinder
 af(){
 assetfinder --subs-only $1 > ~/recon/$1/af.txt
-} 
+cd ~/recon/$1/
+cat af.txt | wc -l
+cd ~
+}
+
+#amass
+am() {
+amass enum -d $1  -o ~/recon/$1/am.txt 
+cd ~/recon/$1/
+cat am.txt | wc -l
+cd ~
+}
+
+#theharvester
+th() {
+cd ~/tools/theHarvester/
+python3  theHarvester.py -d  phishlabs.com  -g -s -v  -n -c -b bingapi,certspotter, crtsh, dnsdumpster,google,netcraft -f /home/recon/$1/th.txt
+cd ~
+}
+
+# checking which are live 
+live() {
+#! /bin/bash
+cd ~/recon/$1/
+cat af.txt am.txt fd.txt > all.txt
+cat all.txt | wc -l
+cat all.txt | sort -u > all-unique.txt
+cat all-unique.txt | wc -l
+cat all-unique.txt | httprobe > live.txt
+cat live.txt | wc -l
+}
+
 #sublime
 sublime(){
 cd /root/Downloads/sublime_text_3/
@@ -35,33 +81,48 @@ cd ~
 #directory search
 dirsearch(){
 cd ~/tools/dirsearch/
-python3 dirsearch.py -u $1 -e   
+python3 dirsearch.py -u $1 -e txt,html,php -t 100
 cd ~ 
 }
 #multi domain dirsearch
 multidaomaindirsearch(){
-cd ~/tools/dirsearch/
-./multidomaindirsearch.sh $1 > ~/recon/$1/dir.txt 
+cd ~/shellfiles/
+./multidomaindirsearch.sh $1 > ~/recon/$1/dir.txt
+mkdir ~recon/$1/status@dir
+cd ~/recon/$1/
+cat dir.txt | grep 200 > /status@dir/200.txt
+cat dir.txt | grep 301 > /status@dir/300.txt
+cat dir.txt | grep 302 > /status@dir/300.txt
+cat dir.txt | grep 304 > /status@dir/300.txt
+cat dir.txt | grep 401 > /status@dir/400.txt
+cat dir.txt | grep 404 > /status@dir/400.txt
+cat dir.txt | grep 501 > /status@dir/500.txt 
 cd ~
 }
 
 #screenshots
 websc(){
-cd ~/tools/webscreenshot/
-python3 webscreenshot.py
-cd ~ 
+webscreenshot -i ~/recon/$1/live.txt -o ~/recon/$1/screenshots/ -w 20 -a "X-FORWARDED-FOR:127.0.0.1"
+cd ~/shellfiles/
+./gallery.sh $1
 }
 
 
 keygen() {
-cd /root/Downloads/burp_licence_key_gen/
-java -jar BurpKeygen.jar
+cd /root/Burp/
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java  -jar BurpKeygen.jar
 cd ~ 
 }
 #burpsuit
 burp() {
-cd /root/Downloads/burp_licence_key_gen/
-java -Xbootclasspath/p:BurpKeygen.jar -jar burpsuite_pro_v1.7.35.jar
+cd /root/Burp/
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xbootclasspath/p:BurpKeygen.jar -jar burpsuite_pro_v1.7.35.jar
+cd ~
+}
+
+burp2() {
+cd /root/Burp/
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xbootclasspath/p:BurpKeygen.jar -jar burpsuite_pro_v2.0.06beta.jar
 cd ~
 }
 
@@ -87,3 +148,5 @@ ipinfo(){
 curl http://ipinfo.io/$1
 }
 
+
+export PATH="$HOME/.cargo/bin:$PATH"
